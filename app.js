@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var http = require('http');
+var http = require('http');  //啟動Server的http
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -52,6 +52,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
+//新增middleware  可用來判斷是否登入才讀取頁面等功能
+app.get('/1/post', function(req, res, next){
+    console.log('this is a express middleware');
+    next();
+});
 //1123 class morning add (express middleware的關係  改到這裡才會work  不然會先跳404)
 app.get('/1/post', posts.list);
 app.post('/1/post', posts.create);
@@ -87,6 +92,7 @@ app.use(function(err, req, res, next) {
     });
 });
 
+//啟動Server的http並設定port
 http.createServer(app).listen(3000, function(){
     console.log('Express server lisening on port 3000');
 });
