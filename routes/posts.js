@@ -21,14 +21,14 @@ exports.create = function(req, res){
     var title = req.query.title;
     var content = req.query.content;
     
+    //配合front-end使用的狀態回饋訊息
+    //backbone中預設有succee與errfor兩種key
+    workflow.outcome = {
+        success: false,
+        errfor: {}
+    };
+    
     workflow.on('validation',function(){    //設立一個狀態 validation
-        
-        //配合front-end使用的狀態回饋訊息
-        //backbone中預設有succee與errfor兩種key
-        workflow.outcome = {
-            success: false,
-            errfor: {}
-        };
         
         if (title.length === 0)
             workflow.outcome.errfor.title = '這是一個必填欄位';
