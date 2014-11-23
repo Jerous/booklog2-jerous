@@ -12,6 +12,31 @@ var posts = require('./routes/posts');  //1123 class morning add
 
 var app = express();
 
+//引入mongoose  並設定資料庫位置名稱
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/booklog2');
+
+//show連接訊息
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  console.log('MongoDB: connected.');	
+});
+
+// 定義資料庫schema
+var postSchema = new mongoose.Schema({
+    title: String,
+    content: String
+});
+
+//定義express中的資料庫物件好存取
+app.db = {
+	model: {
+		Post: mongoose.model('post', postSchema)   //注意mongodb中的collection name和mongoose引用要少一個s
+	}
+};
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
