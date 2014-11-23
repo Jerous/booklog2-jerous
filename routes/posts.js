@@ -23,6 +23,6 @@ exports.create = function(req, res){
     });
     post.save();
     
-    res.send({ status: 'post ok'});
+    res.send({ status:'post ok'});
 
 };
