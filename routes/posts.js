@@ -1,7 +1,7 @@
 var post = 
 [{
-    "title": "±z¦n",
-    "content": "¤µ¤Ñ¬O¬P´Á¤Ñ"
+    "title": "æ‚¨å¥½",
+    "content": "ä»Šå¤©æ˜¯æ˜ŸæœŸå¤©"
 },
 {
     "title": "Hello",
@@ -9,7 +9,7 @@ var post =
 }];
 
 
-exports.list = function(req, res){   // express¹w³]¤@©w¦³request & response¨ç¼Æ
+exports.list = function(req, res){   // expressé è¨­ä¸€å®šæœ‰request & responseå‡½æ•¸
     res.send(post);
 };
 
