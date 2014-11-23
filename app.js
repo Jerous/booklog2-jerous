@@ -8,6 +8,8 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var posts = require('./routes/posts');  //1123 class morning add
+
 var app = express();
 
 // view engine setup
@@ -56,5 +58,8 @@ app.use(function(err, req, res, next) {
     });
 });
 
+//1123 class morning add
+app.get('/1/post', posts.list);
+app.post('/1/post', posts.create);
 
 module.exports = app;
