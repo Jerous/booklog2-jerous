@@ -64,7 +64,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());   //會跳錯  根據/guide/configure/新增
 app.use(passport.session());   //會跳錯  根據/guide/configure/新增
 
-// 設定Sessions (optional)
+// 以下為老師code中新增  但doc中為Sessions (optional)
 passport.serializeUser(function(user, done) {
     done(null, user);
 });
