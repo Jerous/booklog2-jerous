@@ -18,8 +18,15 @@ exports.list = function(req, res){   // express預設一定有request & response
 exports.create = function(req, res){
     var workflow = new events.EventEmitter();  //建立狀態機物件
     var model = req.app.db.model.Post;
-    var title = req.query.title;
-    var content = req.query.content;
+    
+    //因為rest console 網址列傳送參數所以用query
+    //var title = req.query.title;  
+    //var content = req.query.content;
+    // backbone傳遞參數用body  
+    var title = req.body.title;
+    var content = req.body.content;
+    
+    console.log(req.user);
     
     //配合front-end使用的狀態回饋訊息
     //backbone中預設有succee與errfor兩種key

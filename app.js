@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');  //啟動Server的http
 var passport = require('passport'), FacebookStrategy = require('passport-facebook').Strategy ;  //passport facebook login
+var session = require('express-session'); //使用session
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -61,44 +62,46 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // passport facebook login use
+app.use(session({ secret: 'booklog2-jerous' }));
 app.use(passport.initialize());   //會跳錯  根據/guide/configure/新增
 app.use(passport.session());   //會跳錯  根據/guide/configure/新增
 
-// 以下為老師code中新增  但doc中為Sessions (optional)
+//Sessions (optional)
 passport.serializeUser(function(user, done) {
-    done(null, user);
+  done(null, user);
 });
+
 passport.deserializeUser(function(obj, done) {
-    done(null, obj);
+  done(null, obj);
 });
 
 passport.use(new FacebookStrategy({
-    clientID: '558384574291566',
-    clientSecret: '6ab75ab8c84558bba463699205f96df3',
-    callbackURL: "http://localhost:3000/auth/facebook/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    console.log(profile);
-    //return done(null, profile);
-    //實作寫入資料庫
-    app.db.model.User.findOne({"facebook._json.id": profile._json.id}, function(err, user) {
-        if (!user) {
-            var obj = {
-                username: profile.username,
-                displayName: profile.displayName,
-                email: '',
-                facebook: profile
-            };
-
-           var doc = new app.db.model.User(obj);
-           doc.save();
-
-           user = doc;
-        }
-
-        return done(null, user); 
-    });
-  }
+        clientID: '558384574291566',
+        clientSecret: '6ab75ab8c84558bba463699205f96df3',
+        callbackURL: "http://localhost:3000/auth/facebook/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        console.log(profile);
+        //return done(null, profile);
+        //實作寫入資料庫
+        app.db.model.User.findOne({"facebook._json.id": profile._json.id}, function(err, user) {
+            if (!user) {
+                var obj = {
+                    username: profile.username,
+                    displayName: profile.displayName,
+                    email: '',
+                    facebook: profile
+                };
+    
+            var doc = new app.db.model.User(obj);
+            doc.save();
+    
+            user = doc;
+            }
+    
+            return done(null, user); 
+        });
+    }
 ));
 
 app.use('/', routes);
