@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');  //啟動Server的http
+var passport = require('passport'), FacebookStrategy = require('passport-facebook').Strategy ;  //passport facebook login
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -49,9 +50,37 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// passport facebook login use
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function(user, done) {
+    done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+});
+
+passport.use(new FacebookStrategy({
+    clientID: '558384574291566',
+    clientSecret: '6ab75ab8c84558bba463699205f96df3',
+    callbackURL: "http://localhost:3000/auth/facebook/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    console.log(profile);
+    return done(null, profile);
+  }
+));
+
 app.use('/', routes);
 app.use('/users', users);
 
+//另一種middleware寫法
+//app.get('/1/post', function(req, res, next){
+//    console.log('this is a express middleware');
+//    next();
+//}, posts.list);
 //新增middleware  可用來判斷是否登入才讀取頁面等功能
 app.get('/1/post', function(req, res, next){
     console.log('this is a express middleware');
@@ -61,6 +90,16 @@ app.get('/1/post', function(req, res, next){
 app.get('/1/post', posts.list);
 app.post('/1/post', posts.create);
 
+
+//FB login
+app.get('/login', passport.authenticate('facebook'));
+app.get('/auth/facebook/callback', 
+    passport.authenticate('facebook', { 
+        successRedirect: '/',
+        failureRedirect: '/login/failmessage/' 
+    })
+);
+  
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
@@ -96,6 +135,5 @@ app.use(function(err, req, res, next) {
 http.createServer(app).listen(3000, function(){
     console.log('Express server lisening on port 3000');
 });
-
 
 module.exports = app;
