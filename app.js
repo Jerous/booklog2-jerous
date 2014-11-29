@@ -51,16 +51,17 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // passport facebook login use
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize());   //會跳錯  根據doc新增
+app.use(passport.session());   //會跳錯  根據doc新增
 
-passport.serializeUser(function(user, done) {
+// 以下為老師code中新增  但doc中為Sessions (optional)
+/*passport.serializeUser(function(user, done) {
     done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
     done(null, obj);
-});
+});*/
 
 passport.use(new FacebookStrategy({
     clientID: '558384574291566',
