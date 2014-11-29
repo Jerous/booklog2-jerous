@@ -30,11 +30,21 @@ var postSchema = new mongoose.Schema({
     content: String
 });
 
+var userSchema = new mongoose.Schema({
+    username: {type: String, unique: true },
+    displayName: {type: String, unique: true },
+    email: {type: String, unique: true },
+    timeCreated: {type: Date, default: Date.now },
+    facebook: {}
+});
+
+
 //定義express中的資料庫物件好存取
 app.db = {
 	model: {
-		Post: mongoose.model('post', postSchema)   //注意mongodb中的collection name和mongoose引用要少一個s
-	}
+		Post: mongoose.model('post', postSchema),        //注意mongodb中的collection name和mongoose引用要少一個s
+        User: mongoose.model('user', userSchema)
+    }
 };
 
 
@@ -51,13 +61,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // passport facebook login use
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize());   //會跳錯  根據/guide/configure/新增
+app.use(passport.session());   //會跳錯  根據/guide/configure/新增
 
+// 設定Sessions (optional)
 passport.serializeUser(function(user, done) {
     done(null, user);
 });
-
 passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
@@ -69,7 +79,25 @@ passport.use(new FacebookStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     console.log(profile);
-    return done(null, profile);
+    //return done(null, profile);
+    //實作寫入資料庫
+    app.db.model.User.findOne({"facebook._json.id": profile._json.id}, function(err, user) {
+        if (!user) {
+            var obj = {
+                username: profile.username,
+                displayName: profile.displayName,
+                email: '',
+                facebook: profile
+            };
+
+           var doc = new app.db.model.User(obj);
+           doc.save();
+
+           user = doc;
+        }
+
+        return done(null, user); 
+    });
   }
 ));
 
