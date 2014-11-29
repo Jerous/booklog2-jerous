@@ -104,7 +104,7 @@ passport.use(new FacebookStrategy({
     }
 ));
 
-app.use('/', routes);
+app.use('/', routes);   //use表示所有協定所有網頁都要做
 app.use('/users', users);
 
 //另一種middleware寫法
