@@ -139,6 +139,11 @@ app.get('/auth/facebook/callback',
         failureRedirect: '/login/failmessage/' 
     })
 );
+
+app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+});
   
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
