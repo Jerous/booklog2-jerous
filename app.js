@@ -104,6 +104,15 @@ passport.use(new FacebookStrategy({
     }
 ));
 
+// 加上判斷登入後 login 改成 logout
+// 新增express變數讓jade讀取
+// 參考 http://stackoverflow.com/questions/16424947/
+app.use('/', function(req, res, next){
+    res.locals.user = req.user ;
+    next();
+});
+
+
 app.use('/', routes);   //use表示所有協定所有網頁都要做
 app.use('/users', users);
 
