@@ -1,8 +1,8 @@
 //schema plugin
-// °Ñ¦Ò http://mongoosejs.com/docs/plugins.html
-//function «á¦WºÙ¦Û¦æ©w¸q  ¤º²[°Ñ¼Æ¤]¦Û¦æ©w¸q
+//åƒè€ƒ http://mongoosejs.com/docs/plugins.html
+//functionå¾Œåç¨±è‡ªè¡Œå®šç¾©
 module.exports = exports = function countPlugin (schema) {
-//schema°Ñ¼Æ¤¤ªºstatics¡A¦b¨ä¤¤¦A©w¸q¤@­ÓcountÄİ©Ê  ¥\¯à¦p¤U
+//schemaå…§çš„staticså±¬æ€§ä¸­å†æ–°å¢ä¸€å€‹countæ–¹æ³• åŠŸèƒ½å¦‚ä¸‹
     schema.statics.count = function(content) {
         var ccc = require('cccount');
         
