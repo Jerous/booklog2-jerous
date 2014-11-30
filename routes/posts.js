@@ -31,6 +31,11 @@ exports.list = function(req, res){   // express預設一定有request & response
             //http://mongoosejs.com/docs/api.html#query_Query-populate
             //http://mongoosejs.com/docs/api.html#model_Model.populate
             model.populate(posts, {path: 'userId'}, function(err, posts) {
+                
+                for ( i = 0; i < posts.length ; i++) {
+                    posts[i].wchars = model.count(posts[i].content);
+                }
+                
                 res.send({
                     posts: posts
                 });

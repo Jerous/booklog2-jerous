@@ -28,8 +28,9 @@ block content
       <% _.each(posts, function(post) { %>
       .well(style='margin-top: 20px;')
         h1 標題：<%= post.title %>
-        h1 內文：<%= post.content %>
-        h2 作者：<%= post.userId.displayName %>
+        h2 內文：<%= post.content %> 
+          span(style="font-size:14px") 中文字數(<%= post.wchars %>)
+        h3 作者：<%= post.userId.displayName %>
       <% }); %>
     
     script(type='text/template', id='tmpl-results')
