@@ -27,6 +27,8 @@ db.once('open', function callback () {
 
 // 定義資料庫schema
 var postSchema = new mongoose.Schema({
+    //從User表中ref objectid當作新文章objectid  用來表示作者
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user' }, // ref的value要mongodb中的collections name
     title: String,
     content: String
 });

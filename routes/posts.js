@@ -7,6 +7,8 @@ exports.list = function(req, res){   // express預設一定有request & response
 
     model
       .find({})
+      //.populate('userId', 'displayName') 
+      .populate('userId') // 要用schema中定義的key
       .exec(function(err, posts) {  //exec表示以上條件成功後執行後面Funtion
           res.send({
               posts: posts
@@ -25,6 +27,10 @@ exports.create = function(req, res){
     // backbone傳遞參數用body  
     var title = req.body.title;
     var content = req.body.content;
+    
+    //從passportjs生成的req.user中撈id
+    //參考app.js中的104行 return done(null, user); 
+    var userId = req.user._id;  
     
     console.log(req.user);
     
@@ -51,6 +57,7 @@ exports.create = function(req, res){
     
     workflow.on('savePost',function(){
         var post = new model({
+            userId : userId,
             title : title,
             content : content
         });

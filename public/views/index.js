@@ -101,6 +101,8 @@ app.PurchasePost = Backbone.Model.extend({
         title: title,
         content: content
       });
+      
+      app.postView.model.fetch();
     }
   });
 

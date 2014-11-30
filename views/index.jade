@@ -27,7 +27,8 @@ block content
           button.btn.btn-primary.btn-format 日期格式
       <% _.each(posts, function(post) { %>
       .well(style='margin-top: 20px;')
-        h1 <%= post.title %>
+        h1 標題：<%= post.title %>
+        h2 作者：<%= post.userId.displayName %>
       <% }); %>
     
     script(type='text/template', id='tmpl-results')
