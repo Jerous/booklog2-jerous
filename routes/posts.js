@@ -6,15 +6,58 @@ exports.list = function(req, res){   // express預設一定有request & response
     var model = req.app.db.model.Post;
 
     model
-      .find({})
-      //.populate('userId', 'displayName') 
-      .populate('userId') // 要用schema中定義的key
-      .exec(function(err, posts) {  //exec表示以上條件成功後執行後面Funtion
-          res.send({
-              posts: posts
-          });
-          res.end();
-      });
+        /*.find({})
+        //.populate('userId', 'displayName') 
+        .populate('userId') // 要用schema中定義的key
+        .exec(function(err, posts) {  //exec表示以上條件成功後執行後面Funtion
+            res.send({
+                posts: posts
+            });
+            res.end();
+        });*/
+        
+        //改用aggregate project去掉不要的欄位
+        .aggregate([
+            {
+                $project: { 
+                    _id : 1, 
+                    userId : 1, 
+                    title : 1, 
+                    content : 1
+                }
+            }
+        ])
+        .exec(function(err, posts) {
+            //http://mongoosejs.com/docs/api.html#query_Query-populate
+            //http://mongoosejs.com/docs/api.html#model_Model.populate
+            model.populate(posts, {path: 'userId'}, function(err, posts) {
+                res.send({
+                    posts: posts
+                });
+                res.end();
+            });
+        });
+        
+        //以下為硬幹骯髒寫法  只取需要的內容
+        /*.find({})
+        .populate('userId')
+        .exec(function(err, posts) { 
+            var data = [];
+            
+            posts.forEach(function (post){
+                data.push({
+                    _id: post._id,
+                    displayName: post.userId.displayName,
+                    title: post.title,
+                    content: post.content
+                });
+            });
+      
+            res.send({
+                posts: data
+            });
+            res.end();
+        });*/
 };
 
 exports.create = function(req, res){

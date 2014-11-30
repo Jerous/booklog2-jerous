@@ -34,11 +34,15 @@ var postSchema = new mongoose.Schema({
 });
 
 var userSchema = new mongoose.Schema({
-    username: {type: String, unique: true },
-    displayName: {type: String, unique: true },
-    email: {type: String, unique: true },
-    timeCreated: {type: Date, default: Date.now },
-    facebook: {}
+    //http://mongoosejs.com/docs/api.html#schematype_SchemaType-select
+    //select只有用path的方式才有用  參考posts.js的33行  2.6版的find也可用
+    //path是因為postschema中的userid是reference來的  所以可以用select來選擇populate時的欄位是否要顯示
+    //select預設為true
+    username: {type: String, unique: true, select: false },
+    displayName: {type: String, unique: true/*, select: true*/ },
+    email: {type: String, unique: true, select: false },
+    timeCreated: {type: Date, default: Date.now, select: false },
+    facebook: {type: Object, select: false}
 });
 
 
