@@ -28,6 +28,7 @@ block content
       <% _.each(posts, function(post) { %>
       .well(style='margin-top: 20px;')
         h1 標題：<%= post.title %>
+        h1 內文：<%= post.content %>
         h2 作者：<%= post.userId.displayName %>
       <% }); %>
     

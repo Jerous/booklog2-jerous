@@ -42,6 +42,11 @@ var userSchema = new mongoose.Schema({
 });
 
 
+postSchema.index( { title : 1 } ); //定義postschema中的title為index欄位
+postSchema.index( { title : "text" } );  //表示title欄位可以使用全文檢索
+postSchema.index( { content: "text" } );  // windows版可能沒有$text $search這個用法  只能用$req 正規表示式
+
+
 //定義express中的資料庫物件好存取
 app.db = {
 	model: {

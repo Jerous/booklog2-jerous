@@ -80,7 +80,8 @@ exports.listByTag = function(req, res){
     var tag = req.params.tag;
 
     model
-      .find({title: tag})
+      //.find({ title: tag })
+      .find( { $text: { $search: tag } })
       .exec(function(err, posts) {  
           res.send({
               posts: posts
