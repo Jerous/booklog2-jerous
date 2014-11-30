@@ -67,3 +67,17 @@ exports.create = function(req, res){
     
     workflow.emit('validation');
 };
+
+exports.listByTag = function(req, res){
+    var model = req.app.db.model.Post;
+    var tag = req.params.tag;
+
+    model
+      .find({title: tag})
+      .exec(function(err, posts) {  
+          res.send({
+              posts: posts
+          });
+          res.end();
+      });
+};

@@ -128,6 +128,7 @@ app.get('/1/post', function(req, res, next){
 });
 //1123 class morning add (express middleware的關係  改到這裡才會work  不然會先跳404)
 app.get('/1/post', posts.list);
+app.get('/1/post/:tag', posts.listByTag);
 app.post('/1/post', posts.create);
 
 

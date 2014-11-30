@@ -8,16 +8,18 @@ block content
             .col-lg-8
               div#blog-post
             .col-md-4
-              .well#search-section
-                h4 Author Search
-                .input-group
-                  input.form-control#search-tag(type='text')
-                  span.input-group-btn
-                    button.btn.btn-default.btn-search(type='button')
-                      span.glyphicon.glyphicon-search
+              .well#search-section 
               .well#search-result
         .row#form-section
 
+    script(type='text/template', id='tmpl-query')    
+        h4 Title Search
+          .input-group
+            input.form-control#search-tag(type='text')
+            span.input-group-btn
+              button.btn.btn-default.btn-search(type='button')
+                span.glyphicon.glyphicon-search  
+        
     script(type='text/template', id='tmpl-post')
       div#actions
         .btn-group
@@ -26,20 +28,8 @@ block content
       <% _.each(posts, function(post) { %>
       .well(style='margin-top: 20px;')
         h1 <%= post.title %>
-        <% if (post.orders.length === 0) { %>
-        button.btn.btn-default(data-purchase-for!='<%= post._id %>') 購買全文
-        <% } else { %>
-        a.btn.btn-danger(href!='<%= post.orders[0].paypal.links[1].href %>', target='_blank') 線上付款
-        <% } %>
-        p.lead
-          | by
-          | &nbsp;<%= post.userId.facebook.displayName %>
-        p
-          span.glyphicon.glyphicon-time
-          | Posted on 
-          span.post-date <%= post.userId.timeCreated %>
       <% }); %>
-
+    
     script(type='text/template', id='tmpl-results')
       h4 Search Result
       <% _.each(posts, function(post) { %>

@@ -91,7 +91,8 @@ app.PurchasePost = Backbone.Model.extend({
         event.preventDefault();
     },
     performSubmit: function() {
-      event.preventDefault();
+      //關閉default behavier  因為表單中buttom按下預設會改變網址進行動作  而在此不希望改變網址的行為被秀出  所以關閉
+      event.preventDefault(); 
     
       var title = this.$el.find('#title').val();
       var content = this.$el.find('#content').val();
@@ -179,12 +180,35 @@ app.PurchasePost = Backbone.Model.extend({
         });
     }
   });
+  
+  app.QueryView = Backbone.View.extend({
+    el: '#search-section',
+    events: {
+      'click .btn-search': 'performSearch'
+    },
+    initialize: function() {
+        this.template = _.template($('#tmpl-query').html());
+        this.render();        
+    },
+    render: function() {
+        var data = this.template();
+        this.$el.html(data);
+        return this;
+    },
+    performSearch: function() {
+      var tag = this.$el.find('#search-tag').val();
+
+      app.postView.model.query = '/' + tag;
+      app.postView.model.fetch();
+    }
+  });
 
 /**
  * BOOTUP
  **/
   $(document).ready(function() {
     app.postView = new app.PostView();
-    app.searchView = new app.SearchView();
+    //app.searchView = new app.SearchView();
     app.formView = new app.FormView();
+    app.queryView = new app.QueryView();
   });
