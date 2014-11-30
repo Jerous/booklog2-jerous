@@ -30,7 +30,8 @@ var postSchema = new mongoose.Schema({
     //從User表中ref objectid當作新文章objectid  用來表示作者
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user' }, // ref的value要mongodb中的collections name
     title: String,
-    content: String
+    content: String,
+    wchars: {type: Number, default: 0 } //寫不寫沒差 因為是後來schema plugin才加入的  養成好習慣還是先定義起來
 });
 
 var userSchema = new mongoose.Schema({

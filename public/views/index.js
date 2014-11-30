@@ -186,7 +186,9 @@ app.PurchasePost = Backbone.Model.extend({
   app.QueryView = Backbone.View.extend({
     el: '#search-section',
     events: {
-      'click .btn-search': 'performSearch'
+      'click .btn-search': 'performSearch',
+      //可在input欄位中隨KEY隨搜  查詢gooele: html5 input event
+      'input #search-tag': 'performSearch'
     },
     initialize: function() {
         this.template = _.template($('#tmpl-query').html());

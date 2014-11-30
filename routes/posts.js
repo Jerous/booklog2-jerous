@@ -32,6 +32,8 @@ exports.list = function(req, res){   // express預設一定有request & response
             //http://mongoosejs.com/docs/api.html#model_Model.populate
             model.populate(posts, {path: 'userId'}, function(err, posts) {
                 
+                //透過schema plugin再postSchema中新增一個key為wchars，目的為計算中文字數  對照app.js的54行  方法則對照schema/countPlugin.js
+                //暴力作法
                 for ( i = 0; i < posts.length ; i++) {
                     posts[i].wchars = model.count(posts[i].content);
                 }
