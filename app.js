@@ -120,8 +120,9 @@ passport.use(new FacebookStrategy({
 ));
 
 // 加上判斷登入後 login 改成 logout
-// 新增express變數讓jade讀取
+// 新增express變數讓jade讀取(middleware)
 // 參考 http://stackoverflow.com/questions/16424947/
+// 因為nodejs express是單線程的概念，如果不加上next，程式就會停在這裡。不同於其他的use，可能表示route，所以不用next
 app.use('/', function(req, res, next){
     res.locals.user = req.user ;
     next();
