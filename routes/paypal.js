@@ -48,7 +48,7 @@ router.put('/1/post/:postId/pay', function(req, res, next) {   //更模組化的
                 cancel_url: 'http://localhost:3000/1/post/' + postId + '/cancel'
             }
         };
-        
+        //參考doc 設定必填內容
         paypal_api.payment.create(create_payment_json, function(error, payment){
             if (error) {
                 console.log(error);
@@ -87,7 +87,9 @@ router.put('/1/post/:postId/pay', function(req, res, next) {   //更模組化的
 			userId: req.user._id,
 			paypal: workflow.payment
 		};
-
+        
+        //mongoose findByIdAndUpdate http://mongoosejs.com/docs/api.html#model_Model.findByIdAndUpdate
+        //mongodb addToSet http://docs.mongodb.org/manual/reference/operator/update/addToSet/
 		posts
 		.findByIdAndUpdate(postId, { $addToSet: { orders: order } }, function(err, post) {
 			workflow.outcome.success = true;
