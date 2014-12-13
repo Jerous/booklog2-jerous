@@ -32,7 +32,13 @@ var postSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user' }, // ref的value要mongodb中的collections name
     title: String,
     content: String,
-    wchars: {type: Number, default: 0 } //寫不寫沒差 因為是後來schema plugin才加入的  養成好習慣還是先定義起來
+    wchars: {type: Number, default: 0 }, //寫不寫沒差 因為是後來schema plugin才加入的  養成好習慣還是先定義起來
+    
+    // PayPal payments
+    orders: [{
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+      paypal: { type: Object, select: false } 
+    }],
 });
 
 var userSchema = new mongoose.Schema({

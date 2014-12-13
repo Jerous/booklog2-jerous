@@ -23,7 +23,8 @@ exports.list = function(req, res){   // express預設一定有request & response
                     _id : 1, 
                     userId : 1, 
                     title : 1, 
-                    content : 1
+                    content : 1,
+                    orders : 1
                 }
             }
         ])

@@ -52,16 +52,53 @@ router.put('/1/post/:postId/pay', function(req, res, next) {   //更模組化的
         paypal_api.payment.create(create_payment_json, function(error, payment){
             if (error) {
                 console.log(error);
+                return workflow.emit('response');
             } 
-            
-            if (payment) {
+
+            /*if (payment) {
                 console.log("Create Payment Response");
                 console.log(payment);
             }
+            
+            var order = {
+		    	userId: req.user._id,
+		    	paypal: payment
+		    };
+
+			posts
+			.findByIdAndUpdate(postId, { $addToSet: { orders: order } }, function(err, post) {
+				workflow.outcome.success = true;
+				workflow.outcome.data = post;
+				
+				workflow.emit('response');
+			});*/
+            
+            if (!payment) {
+                return workflow.emit('response');
+            }
+            
+            workflow.payment = payment;
+            workflow.emit('updatePost');
         });
     });
     
+    workflow.on('updatePost',function(){
+        var order = {
+			userId: req.user._id,
+			paypal: workflow.payment
+		};
+
+		posts
+		.findByIdAndUpdate(postId, { $addToSet: { orders: order } }, function(err, post) {
+			workflow.outcome.success = true;
+			workflow.outcome.data = post;
+			
+			workflow.emit('response');
+		});
+    });
+    
     workflow.on('response',function(){
+        return res.send(workflow.outcome);
     });
     
     return workflow.emit('validate');

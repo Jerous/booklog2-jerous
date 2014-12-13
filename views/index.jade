@@ -27,10 +27,15 @@ block content
           button.btn.btn-primary.btn-format 日期格式
       <% _.each(posts, function(post) { %>
       .well(style='margin-top: 20px;')
-        h1 標題：<%= post.title %>
+        h1 標題：<%= post.title %> 
         h2 內文：<%= post.content %> 
           span(style="font-size:14px") 中文字數(<%= post.wchars %>)
         h3 作者：<%= post.userId.displayName %>
+        <% if (post.orders.length === 0) { %>
+        button.btn.btn-default(data-purchase-for!='<%= post._id %>') 購買全文
+        <% } else { %>
+        a.btn.btn-danger(href!='<% post.orders[0].paypal.links[1].href %>', target='_blank') 購買全文
+        <% } %>
       <% }); %>
     
     script(type='text/template', id='tmpl-results')

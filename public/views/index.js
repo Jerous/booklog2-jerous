@@ -71,7 +71,7 @@ app.PurchasePost = Backbone.Model.extend({
     el: '#form-section',
     events: {
       'submit form': 'preventSubmit',
-      'click #btn-submit': 'performSubmit'
+      'click #btn-submit': 'performSubmit',
     },
     initialize: function() {
         this.model = new app.SinglePost();
@@ -91,7 +91,7 @@ app.PurchasePost = Backbone.Model.extend({
         event.preventDefault();
     },
     performSubmit: function() {
-      //Ãö³¬default behavier  ¦]¬°ªí³æ¤¤buttom«ö¤U¹w³]·|§ïÅÜºô§}¶i¦æ°Ê§@  ¦Ó¦b¦¹¤£§Æ±æ§ïÅÜºô§}ªº¦æ¬°³Q¨q¥X  ©Ò¥HÃö³¬
+      //é—œé–‰default behavier  å› ç‚ºè¡¨å–®ä¸­buttomæŒ‰ä¸‹é è¨­æœƒæ”¹è®Šç¶²å€é€²è¡Œå‹•ä½œ  è€Œåœ¨æ­¤ä¸å¸Œæœ›æ”¹è®Šç¶²å€çš„è¡Œç‚ºè¢«ç§€å‡º  æ‰€ä»¥é—œé–‰
       event.preventDefault(); 
     
       var title = this.$el.find('#title').val();
@@ -136,12 +136,12 @@ app.PurchasePost = Backbone.Model.extend({
   	el: '#blog-post',
     events: {
       /*'click .btn-filter': 'performFilter',
-      'click .btn-format': 'performFormat',
-      'click [data-purchase-for]': 'performPurchase'*/
+      'click .btn-format': 'performFormat',*/
+      'click [data-purchase-for]': 'performPurchase'
     },
     initialize: function() {
         this.model = new app.Post();
-        //this.purchase = new app.PurchasePost();
+        this.purchase = new app.PurchasePost();
         this.template = _.template($('#tmpl-post').html());
 
         this.model.bind('change', this.render, this);
@@ -154,7 +154,7 @@ app.PurchasePost = Backbone.Model.extend({
         this.$el.html(data);
 
         return this;
-    }/*,
+    },/*,
     performFilter: function() {
         this.model.query = '?sort=date';
         this.model.fetch();
@@ -164,7 +164,7 @@ app.PurchasePost = Backbone.Model.extend({
           var me = $(this);
           me.html( moment( me.text() ).fromNow() );
         });
-    },
+    },*/
     performPurchase: function(event) {
         var me = this.$el.find(event.target);
         var postId = me.data('purchase-for');
@@ -173,21 +173,21 @@ app.PurchasePost = Backbone.Model.extend({
         this.purchase.set('id', postId);
         this.purchase.save(this.model.attributes, {
           success: function(model, response, options) {
-            $.notify('­qÁÊ¦¨¥\¡Cµ¥­Ô¥I´Ú¡I');
+            $.notify('è¨‚è³¼æˆåŠŸã€‚ç­‰å€™ä»˜æ¬¾ï¼');
             self.model.fetch();
           },
           error: function(model, response, options) {
-            $.notify('¥¢±Ñ')
+            $.notify('å¤±æ•—')
           }
         });
-    }*/
+    }
   });
   
   app.QueryView = Backbone.View.extend({
     el: '#search-section',
     events: {
       'click .btn-search': 'performSearch',
-      //¥i¦binputÄæ¦ì¤¤ÀHKEYÀH·j  ¬d¸ßgooele: html5 input event
+      //å¯åœ¨inputæ¬„ä½ä¸­éš¨KEYéš¨æœ  æŸ¥è©¢gooele: html5 input event
       'input #search-tag': 'performSearch'
     },
     initialize: function() {
