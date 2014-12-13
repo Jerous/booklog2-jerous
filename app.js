@@ -11,6 +11,7 @@ var session = require('express-session'); //使用session
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var posts = require('./routes/posts');  //1123 class morning add
+var paypal = require('./routes/paypal');
 
 var app = express();
 
@@ -70,10 +71,11 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(logger('dev'));
+app.use(logger('dev')); //會紀錄下幾乎所有的資訊，包含 HTTP 請求、送出的 Static Files 等。
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser()); //用來處理 HTTP Cookies 的 Middleware。它可以協助我們解析 Cookies，並將所有的 Cookies 放在 req.cookies 物件（Key-Value Pairs 格式）
+//用來指定 "Static Files" 的路徑
 app.use(express.static(path.join(__dirname, 'public')));
 
 // passport facebook login use
@@ -82,8 +84,8 @@ app.use(passport.initialize());   //會跳錯  根據/guide/configure/新增
 app.use(passport.session());   //會跳錯  根據/guide/configure/新增
 
 //Sessions (optional)
-passport.serializeUser(function(user, done) {
-  done(null, user);
+passport.serializeUser(function(user, done) {  //保存user
+  done(null, user);  
 });
 
 passport.deserializeUser(function(obj, done) {
@@ -131,6 +133,10 @@ app.use('/', function(req, res, next){
 
 app.use('/', routes);   //use表示所有協定所有網頁都要做
 app.use('/users', users);
+
+//paypel api
+app.use(paypal);
+
 
 //另一種middleware寫法
 //app.get('/1/post', function(req, res, next){

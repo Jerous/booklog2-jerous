@@ -135,13 +135,13 @@ app.PurchasePost = Backbone.Model.extend({
   app.PostView = Backbone.View.extend({
   	el: '#blog-post',
     events: {
-      'click .btn-filter': 'performFilter',
+      /*'click .btn-filter': 'performFilter',
       'click .btn-format': 'performFormat',
-      'click [data-purchase-for]': 'performPurchase'
+      'click [data-purchase-for]': 'performPurchase'*/
     },
     initialize: function() {
         this.model = new app.Post();
-        this.purchase = new app.PurchasePost();
+        //this.purchase = new app.PurchasePost();
         this.template = _.template($('#tmpl-post').html());
 
         this.model.bind('change', this.render, this);
@@ -154,7 +154,7 @@ app.PurchasePost = Backbone.Model.extend({
         this.$el.html(data);
 
         return this;
-    },
+    }/*,
     performFilter: function() {
         this.model.query = '?sort=date';
         this.model.fetch();
@@ -180,7 +180,7 @@ app.PurchasePost = Backbone.Model.extend({
             $.notify('¥¢±Ñ')
           }
         });
-    }
+    }*/
   });
   
   app.QueryView = Backbone.View.extend({

@@ -122,7 +122,7 @@ exports.create = function(req, res){
         res.send(workflow.outcome);
     });
     
-    workflow.emit('validation');
+    return workflow.emit('validation');
 };
 
 exports.listByTag = function(req, res){
