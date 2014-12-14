@@ -39,7 +39,7 @@ var postSchema = new mongoose.Schema({
     orders: [{
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
       // Execute paypal payment中的validate需要取得paymentId(以購買但尚未付款) 所以改true
-      paypal: { type: Object, select: false }  
+      paypal: { type: Object, select: true }  
     }],
     
     //該篇內容已購買的人 寫成矩陣在addtoset時不用另外指定key

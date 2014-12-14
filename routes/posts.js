@@ -3,9 +3,10 @@
 var events = require('events'); 
 
 exports.list = function(req, res){   // express預設一定有request & response函數
+    var workflow = new events.EventEmitter();
     var model = req.app.db.model.Post;
 
-    model
+    //model
         /*.find({})
         //.populate('userId', 'displayName') 
         .populate('userId') // 要用schema中定義的key
@@ -16,8 +17,29 @@ exports.list = function(req, res){   // express預設一定有request & response
             res.end();
         });*/
         
+        //以下為硬幹骯髒寫法  只取需要的內容
+        /*.find({})
+        .populate('userId')
+        .exec(function(err, posts) { 
+            var data = [];
+            
+            posts.forEach(function (post){
+                data.push({
+                    _id: post._id,
+                    displayName: post.userId.displayName,
+                    title: post.title,
+                    content: post.content
+                });
+            });
+      
+            res.send({
+                posts: data
+            });
+            res.end();
+        });*/
+        
         //改用aggregate project去掉不要的欄位
-        .aggregate([
+        /*.aggregate([
             {
                 $project: { 
                     _id : 1, 
@@ -53,28 +75,67 @@ exports.list = function(req, res){   // express預設一定有request & response
                 });
                 res.end();
             });
-        });
-        
-        //以下為硬幹骯髒寫法  只取需要的內容
-        /*.find({})
-        .populate('userId')
-        .exec(function(err, posts) { 
-            var data = [];
-            
-            posts.forEach(function (post){
-                data.push({
-                    _id: post._id,
-                    displayName: post.userId.displayName,
-                    title: post.title,
-                    content: post.content
-                });
-            });
-      
-            res.send({
-                posts: data
-            });
-            res.end();
         });*/
+    
+    //重構post.js 使用workflow FSM
+    workflow.outcome = {
+        success: false,
+        errfor: {}
+    };
+    
+    workflow.on('validation',function(){
+        if (model) {
+            return workflow.emit('aggregation');
+        } else {
+            workflow.outcome.data = { error_description: 'their is no model' };
+            return workflow.emit('response');
+        }
+    });
+    
+    workflow.on('aggregation',function(){
+        model.aggregate([
+            {
+                $project: { 
+                    _id : 1, 
+                    userId : 1, 
+                    title : 1, 
+                    content : 1,
+                    orders : 1,
+                    customers : 1,
+                    timeCreated : 1,
+                    granted : 1
+                }
+            }
+        ])
+        .exec(function(err, posts) {
+            workflow.posts = posts;
+            workflow.emit('populate');
+        });
+    });
+    
+    workflow.on('populate',function(){
+        model.populate(workflow.posts, {path: 'userId'}, function(err, posts) {
+            for ( i = 0; i < posts.length ; i++) {
+                posts[i].wchars = model.count(posts[i].content);
+
+                var uid;
+                for (j = 0; j < posts[i].customers.length; j++) {
+                    uid = '' + posts[i].customers[j];
+                    if (uid === req.user._id) posts[i].granted = true;
+                }
+            }
+            
+            workflow.outcome.posts = posts;
+            workflow.outcome.success = true;
+            return workflow.emit('response');
+        });
+    });
+    
+    workflow.on('response',function(){
+        res.send(workflow.outcome);
+    });
+    
+    return workflow.emit('validation');
 };
 
 exports.create = function(req, res){
