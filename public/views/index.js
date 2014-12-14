@@ -137,7 +137,8 @@ app.PurchasePost = Backbone.Model.extend({
     events: {
       'click .btn-filter': 'performFilter',
       'click .btn-format': 'performFormat',
-      'click [data-purchase-for]': 'performPurchase'
+      'click [data-purchase-for]': 'performPurchase',
+      'click [data-payer]': 'failclick'
     },
     initialize: function() {
         this.model = new app.Post();
@@ -180,6 +181,9 @@ app.PurchasePost = Backbone.Model.extend({
             $.notify('失敗')
           }
         });
+    },
+    failclick: function() {
+        alert('買過了是在點三小逆');
     }
   });
   

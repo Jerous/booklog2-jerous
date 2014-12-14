@@ -114,6 +114,7 @@ router.put('/1/post/:postId/pay', function(req, res, next) {   //更模組化的
 router.get('/1/post/:postId/paid', function(req, res, next) {   //更模組化的寫法
     var workflow = new events.EventEmitter();
     var PayerID = req.query.PayerID;   // paypal callback query string  付款人資訊
+    //var paymentId = req.query.paymentId
     var postId = req.params.postId;
     var posts = req.app.db.model.Post;
     
@@ -136,6 +137,7 @@ router.get('/1/post/:postId/paid', function(req, res, next) {   //更模組化�
                 return workflow.emit('response');
             }
             
+            //workflow.paymentId = paymentId;  //搭配117行
             workflow.paymentId = post.orders[0].paypal.id;
             workflow.emit('execute_payment');
         });
