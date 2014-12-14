@@ -87,7 +87,7 @@ exports.list = function(req, res){   // express預設一定有request & response
         if (model) {
             return workflow.emit('aggregation');
         } else {
-            workflow.outcome.data = { error_description: 'their is no model' };
+            workflow.outcome.errfor = { error_description: 'their is no model' };
             return workflow.emit('response');
         }
     });
@@ -108,13 +108,18 @@ exports.list = function(req, res){   // express預設一定有request & response
             }
         ])
         .exec(function(err, posts) {
-            workflow.posts = posts;
+            workflow.posts = posts;   //把posts傳遞到workflow皆可用的全域變數
             workflow.emit('populate');
         });
     });
     
     workflow.on('populate',function(){
         model.populate(workflow.posts, {path: 'userId'}, function(err, posts) {
+            if (err) {
+                workflow.outcome.errfor = { error_description: 'populate fail' };
+                return workflow.emit('response');
+            }
+            
             for ( i = 0; i < posts.length ; i++) {
                 posts[i].wchars = model.count(posts[i].content);
 
