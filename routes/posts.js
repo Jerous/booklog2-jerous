@@ -1,6 +1,7 @@
 // include事件  
 //參考http://nodejs.org/api/events.html#events_class_events_eventemitter
-var events = require('events'); 
+var events = require('events');
+var async = require('async');
 
 exports.list = function(req, res){   // express預設一定有request & response函數
     var workflow = new events.EventEmitter();
@@ -102,18 +103,26 @@ exports.list = function(req, res){   // express預設一定有request & response
                     content : 1,
                     orders : 1,
                     customers : 1,
-                    timeCreated : 1,
-                    granted : 1
+                    timeCreated : 1
                 }
             }
         ])
         .exec(function(err, posts) {
+            if (err) {
+                workflow.outcome.errfor = { error_description: 'aggregation fail' };
+                return workflow.emit('response');
+            }
+        
             workflow.posts = posts;   //把posts傳遞到workflow皆可用的全域變數
-            workflow.emit('populate');
+            //workflow.emit('populate');
+            
+            //populate狀態再拆解  並用async改寫  同步執行populate wchars isGranted
+            //https://github.com/caolan/async
+            async.parallel([wchars, isgranted, populate], asyncFinally);
         });
     });
     
-    workflow.on('populate',function(){
+    /*workflow.on('populate',function(){
         model.populate(workflow.posts, {path: 'userId'}, function(err, posts) {
             if (err) {
                 workflow.outcome.errfor = { error_description: 'populate fail' };
@@ -134,7 +143,45 @@ exports.list = function(req, res){   // express預設一定有request & response
             workflow.outcome.success = true;
             return workflow.emit('response');
         });
-    });
+    });*/
+    
+    
+    //https://github.com/caolan/async#parallel  
+    // function(callback){ callback(err, result)} ;
+    
+    var populate = function(callback) {
+        model.populate(workflow.posts, {path: 'userId'}, function(err, posts) {
+            if (err) {
+                callback(err, null);
+            }
+            workflow.outcome.posts = posts;
+            
+            return callback(null, 'done');
+        });
+    }
+    
+    var wchars = function(callback){
+        for ( i = 0; i < workflow.posts.length ; i++) {
+            workflow.posts[i].wchars = model.count(workflow.posts[i].content);
+        }
+        return callback(null, 'done');
+    }
+    
+    var isgranted = function(callback){
+        for ( i = 0; i < workflow.posts.length ; i++) {
+            var uid;
+            for (j = 0; j < workflow.posts[i].customers.length; j++) {
+                uid = '' + workflow.posts[i].customers[j];
+                if (uid === req.user._id) workflow.posts[i].granted = true;
+            }
+        }
+        return callback(null, 'done');
+    }
+    
+    var asyncFinally = function (err, results){
+        workflow.outcome.success = true;
+        return workflow.emit('response');
+    }
     
     workflow.on('response',function(){
         res.send(workflow.outcome);
