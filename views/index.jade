@@ -33,6 +33,8 @@ block content
         h3 作者：<%= post.userId.displayName %>
         <% if (post.orders.length === 0) { %>
         button.btn.btn-default(data-purchase-for!='<%= post._id %>') 訂購本文
+        <% } else if (post.granted === true) { %>
+        button.btn.btn-primary(data-purchase-for!='<%= post._id %>') 己購買
         <% } else { %>
         a.btn.btn-danger(href!='<%= post.orders[0].paypal.links[1].href %>', target='_blank') 前往付款
         <% } %>

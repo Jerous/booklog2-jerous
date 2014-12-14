@@ -39,8 +39,15 @@ exports.list = function(req, res){   // express預設一定有request & response
                 //暴力作法
                 for ( i = 0; i < posts.length ; i++) {
                     posts[i].wchars = model.count(posts[i].content);
+                    
+                    //加上判斷是否paypal已購買的迴圈檢查
+                    var uid;
+                    for (j = 0; j < posts[i].customers.length; j++) {
+                        uid = '' + posts[i].customers[j];
+                        if (uid === req.user._id) posts[i].granted = true;
+                    }
                 }
-                
+
                 res.send({
                     posts: posts
                 });

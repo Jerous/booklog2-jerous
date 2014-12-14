@@ -35,12 +35,14 @@ var postSchema = new mongoose.Schema({
     timeCreated: {type: Date, default: Date.now, select: false },
     wchars: {type: Number, default: 0 }, //寫不寫沒差 因為是後來schema plugin才加入的  養成好習慣還是先定義起來
     
-    // PayPal payments
+    // PayPal payments 以購買尚未付款
     orders: [{
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
-      paypal: { type: Object, select: true } 
+      // Execute paypal payment中的validate需要取得paymentId(以購買但尚未付款) 所以改true
+      paypal: { type: Object, select: true }  
     }],
     
+    //該篇內容已購買的人
     customers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }]
 });
 
