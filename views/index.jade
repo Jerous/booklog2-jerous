@@ -32,9 +32,9 @@ block content
           span(style="font-size:14px") 中文字數(<%= post.wchars %>)
         h3 作者：<%= post.userId.displayName %>
         <% if (post.orders.length === 0) { %>
-        button.btn.btn-default(data-purchase-for!='<%= post._id %>') 購買全文
+        button.btn.btn-default(data-purchase-for!='<%= post._id %>') 訂購本文
         <% } else { %>
-        a.btn.btn-danger(href!='<%= post.orders[0].paypal.links[1].href %>', target='_blank') 購買全文
+        a.btn.btn-danger(href!='<%= post.orders[0].paypal.links[1].href %>', target='_blank') 前往付款
         <% } %>
       <% }); %>
     

@@ -24,7 +24,9 @@ exports.list = function(req, res){   // express預設一定有request & response
                     userId : 1, 
                     title : 1, 
                     content : 1,
-                    orders : 1
+                    orders : 1,
+                    customers : 1,
+                    timeCreated : 1
                 }
             }
         ])

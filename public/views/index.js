@@ -71,7 +71,7 @@ app.PurchasePost = Backbone.Model.extend({
     el: '#form-section',
     events: {
       'submit form': 'preventSubmit',
-      'click #btn-submit': 'performSubmit',
+      'click #btn-submit': 'performSubmit'
     },
     initialize: function() {
         this.model = new app.SinglePost();
@@ -135,8 +135,8 @@ app.PurchasePost = Backbone.Model.extend({
   app.PostView = Backbone.View.extend({
   	el: '#blog-post',
     events: {
-      /*'click .btn-filter': 'performFilter',
-      'click .btn-format': 'performFormat',*/
+      'click .btn-filter': 'performFilter',
+      'click .btn-format': 'performFormat',
       'click [data-purchase-for]': 'performPurchase'
     },
     initialize: function() {
@@ -154,7 +154,7 @@ app.PurchasePost = Backbone.Model.extend({
         this.$el.html(data);
 
         return this;
-    },/*,
+    },
     performFilter: function() {
         this.model.query = '?sort=date';
         this.model.fetch();
@@ -164,7 +164,7 @@ app.PurchasePost = Backbone.Model.extend({
           var me = $(this);
           me.html( moment( me.text() ).fromNow() );
         });
-    },*/
+    },
     performPurchase: function(event) {
         var me = this.$el.find(event.target);
         var postId = me.data('purchase-for');

@@ -44,6 +44,8 @@ router.put('/1/post/:postId/pay', function(req, res, next) {   //更模組化的
                 description: '購買教學文章'
             }],
             redirect_urls: {
+            
+                //http://localhost:3000/1/post/548bd9bacb50ac8018d15bf4/paid?paymentId=PAY-3YH39679C3452362HKSF5VRA&token=EC-4YM71232SL814491D&PayerID=D89BU7L8CYYP6
                 return_url: 'http://localhost:3000/1/post/' + postId + '/paid',
                 cancel_url: 'http://localhost:3000/1/post/' + postId + '/cancel'
             }
@@ -105,6 +107,70 @@ router.put('/1/post/:postId/pay', function(req, res, next) {   //更模組化的
     
     return workflow.emit('validate');
     
+});
+
+router.get('/1/post/:postId/paid', function(req, res, next) {   //更模組化的寫法
+    var workflow = new events.EventEmitter();
+    var PayerID = req.query.PayerID;
+    var postId = req.params.postId;
+    var posts = req.app.db.model.Post;
+    
+    workflow.outcome = {
+        success: false
+    };
+    
+    workflow.on('validate',function(){
+        posts
+        .findOne( {_id: postId} )
+        .exec(function(err, post){
+            if (err) {
+                workflow.err = err;
+                return workflow.emit('response');
+            }
+            //產品不存在
+            if (!post) {
+                return workflow.emit('response');
+            }
+            
+            workflow.paymentId = post.orders[0].paypal.id;
+            workflow.emit('execute_payment');
+        });
+    });
+    
+    workflow.on('execute_payment',function(){
+        paypal_api.configure(config_opts);  //讀入paypal參數
+    
+        var execute_payment_details = { 
+            payer_id: PayerID
+        };
+        
+        paypal_api.payment.execute(workflow.paymentId, execute_payment_details, function(error, payment){
+            if(error){
+                workflow.err = err;
+                return workflow.emit('response');
+            }
+            
+            workflow.outcome.data = payment;		
+			workflow.emit('updatePost');   
+        });
+    });
+    
+    workflow.on('updatePost',function(){
+		posts
+		.findByIdAndUpdate(postId, { $addToSet: { customers: req.user._id } }, function(err, post) {
+			workflow.outcome.success = true;
+			workflow.outcome.data = post;
+			
+			workflow.emit('response');
+		});
+    });
+    
+    
+    workflow.on('response',function(){
+        return res.send(workflow.outcome);
+    });
+    
+    return workflow.emit('validate');
 });
 
 module.exports = router;
