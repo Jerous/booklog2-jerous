@@ -155,7 +155,7 @@ router.get('/1/post/:postId/paid', function(req, res, next) {   //更模組化�
         //由doc的request sample code得知寫法
         paypal_api.payment.execute(workflow.paymentId, execute_payment_details, function(error, payment){
             if(error){
-                workflow.err = err;
+                workflow.err = error;
                 return workflow.emit('response');
             }
             

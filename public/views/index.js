@@ -96,10 +96,12 @@ app.PurchasePost = Backbone.Model.extend({
     
       var title = this.$el.find('#title').val();
       var content = this.$el.find('#content').val();
+      var videoid = this.$el.find('#videoid').val();
 
       this.model.save({
         title: title,
-        content: content
+        content: content,
+        videoid: videoid
       });
       
       app.postView.model.fetch();

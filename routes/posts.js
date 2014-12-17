@@ -103,6 +103,7 @@ exports.list = function(req, res){   // express預設一定有request & response
                     content : 1,
                     orders : 1,
                     customers : 1,
+                    videoid : 1,
                     timeCreated : 1
                 }
             }
@@ -200,6 +201,7 @@ exports.create = function(req, res){
     // backbone傳遞參數用body  
     var title = req.body.title;
     var content = req.body.content;
+    var videoid = req.body.videoid;
     
     //從passportjs生成的req.user中撈id
     //參考app.js中的104行 return done(null, user); 
@@ -221,6 +223,9 @@ exports.create = function(req, res){
             
         if (content.length === 0)
             workflow.outcome.errfor.content = '這是一個必填欄位';
+            
+        if (videoid.length === 0)
+            workflow.outcome.errfor.videoid = '這是一個必填欄位';
 
         if (Object.keys(workflow.outcome.errfor).length !== 0)
             return workflow.emit('response');
@@ -232,7 +237,8 @@ exports.create = function(req, res){
         var post = new model({
             userId : userId,
             title : title,
-            content : content
+            content : content,
+            videoid : videoid
         });
         post.save();
         

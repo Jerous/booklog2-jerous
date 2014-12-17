@@ -28,13 +28,17 @@ block content
       <% _.each(posts, function(post) { %>
       .well(style='margin-top: 20px;')
         h1 標題：<%= post.title %> 
-        h2 內文：<%= post.content %> 
           span(style="font-size:14px") 中文字數(<%= post.wchars %>)
         h3 作者：<%= post.userId.displayName %>
         <% if (post.orders.length === 0) { %>
         button.btn.btn-default(data-purchase-for!='<%= post._id %>') 訂購本文
         <% } else if (post.granted === true) { %>
         button.btn.btn-primary(data-payer!='<%= post._id %>') 己購買
+        h2 內文：<%= post.content %> 
+        h3 影片ID：<%= post.videoid %>
+        a(href!='https://www.youtube.com/watch?v=<%= post.videoid %>', target='_blank')
+          img(src!='http://i3.ytimg.com/vi/<%= post.videoid %>/hqdefault.jpg')
+          iframe(width="560", height="315", src!="//www.youtube.com/embed/<%= post.videoid %>", frameborder="0", allowfullscreen)
         <% } else { %>
         a.btn.btn-danger(href!='<%= post.orders[0].paypal.links[1].href %>', target='_blank') 前往付款
         <% } %>
@@ -54,8 +58,12 @@ block content
           input.form-control#title(name='title', type='text')
           label.has-error.control-label.pull-right <%= errfor.title %>
         .form-group(class!='<%= errfor.content ? "has-error" : "" %>')
-          label.control-label(for='title') Content
+          label.control-label(for='Content') Content
           textarea.form-control#content(name='content')
           label.has-error.control-label.pull-right <%= errfor.content %>
+        .form-group(class!='<%= errfor.videoid ? "has-error" : "" %>')
+          label.control-label(for='videoid') videoid
+          input.form-control#videoid(name='videoid', type='text')
+          label.has-error.control-label.pull-right <%= errfor.videoid %>
         .form-group
           button#btn-submit.btn.btn-primary(name='btn-submit') Save
