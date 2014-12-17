@@ -45,6 +45,7 @@ var postSchema = new mongoose.Schema({
     
     //該篇內容已購買的人 寫成矩陣在addtoset時不用另外指定key
     customers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    granted: {type: Boolean, default: false }
 });
 
 var userSchema = new mongoose.Schema({

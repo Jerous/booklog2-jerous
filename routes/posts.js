@@ -104,6 +104,7 @@ exports.list = function(req, res){   // express預設一定有request & response
                     orders : 1,
                     customers : 1,
                     videoid : 1,
+                    granted : 1,
                     timeCreated : 1
                 }
             }
@@ -238,7 +239,8 @@ exports.create = function(req, res){
             userId : userId,
             title : title,
             content : content,
-            videoid : videoid
+            videoid : videoid,
+            granted : false
         });
         post.save();
         
@@ -255,16 +257,82 @@ exports.create = function(req, res){
 };
 
 exports.listByTag = function(req, res){
+    var workflow = new events.EventEmitter();
     var model = req.app.db.model.Post;
     var tag = req.params.tag;
+    
+    workflow.outcome = {
+        success: false,
+        errfor: {}
+    };
 
-    model
-      //.find({ title: tag })
-      .find( { $text: { $search: tag } })
-      .exec(function(err, posts) {  
-          res.send({
-              posts: posts
+    workflow.on('validation',function(){
+        if (model) {
+            return workflow.emit('find');
+        } else {
+            workflow.outcome.errfor = { error_description: 'their is no model' };
+            return workflow.emit('response');
+        }
+    });
+    
+    workflow.on('find',function(){
+        model
+          //.find({ title: tag })
+          .find( { $text: { $search: tag } })
+          .exec(function(err, posts) {  
+              /*res.send({
+                  posts: posts
+              });
+              res.end();*/
+              if (err) {
+                    workflow.outcome.errfor = { error_description: 'find fail' };
+                    return workflow.emit('response');
+                }
+            
+                workflow.posts = posts;
+                async.parallel([wchars, isgranted, populate], asyncFinally);
           });
-          res.end();
+    
+    });
+    
+      
+    var populate = function(callback) {
+      model.populate(workflow.posts, {path: 'userId'}, function(err, posts) {
+          if (err) {
+              callback(err, null);
+          }
+          workflow.outcome.posts = posts;
+          
+          return callback(null, 'done');
       });
+    }
+    
+    var wchars = function(callback){
+        for ( i = 0; i < workflow.posts.length ; i++) {
+            workflow.posts[i].wchars = model.count(workflow.posts[i].content);
+        }
+        return callback(null, 'done');
+    }
+    
+    var isgranted = function(callback){
+        for ( i = 0; i < workflow.posts.length ; i++) {
+            var uid;
+            for (j = 0; j < workflow.posts[i].customers.length; j++) {
+                uid = '' + workflow.posts[i].customers[j];
+                if (uid === req.user._id) workflow.posts[i].granted = true;
+            }
+        }
+        return callback(null, 'done');
+    }
+    
+    var asyncFinally = function (err, results){
+        workflow.outcome.success = true;
+        return workflow.emit('response');
+    }
+    
+    workflow.on('response',function(){
+        res.send(workflow.outcome);
+    });
+    
+    return workflow.emit('validation');
 };
