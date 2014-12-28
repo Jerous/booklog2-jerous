@@ -1,0 +1,11 @@
+*.swp
+*.swo
+.sass-cache
+.local
+*.DS_Store
+node_modules
+*.sublime-*
+npm-debug.log
+bower_components/*
+public/vendor/*
+.nodemonignore
