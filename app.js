@@ -108,7 +108,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new FacebookStrategy({
         clientID: '558384574291566',
         clientSecret: '6ab75ab8c84558bba463699205f96df3',
-        callbackURL: "http://jerous.funtube.tw:3000/auth/facebook/callback"
+        callbackURL: "http://jerous.funtube.tw/auth/facebook/callback"
     },
     function(accessToken, refreshToken, profile, done) {
         console.log(profile);
