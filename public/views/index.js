@@ -25,7 +25,7 @@ app.Search = Backbone.Model.extend({
 
 app.Post = Backbone.Model.extend({  
   url: function() {
-    return 'http://jerous.funtube.tw/1/post' + this.query
+    return 'http://jerous.funtube.tw:3000/1/post' + this.query
   },
   query: '',
   defaults: {
