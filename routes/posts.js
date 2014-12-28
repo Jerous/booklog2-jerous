@@ -265,15 +265,6 @@ exports.listByTag = function(req, res){
         success: false,
         errfor: {}
     };
-
-    workflow.on('validation',function(){
-        if (model) {
-            return workflow.emit('find');
-        } else {
-            workflow.outcome.errfor = { error_description: 'their is no model' };
-            return workflow.emit('response');
-        }
-    });
     
     workflow.on('find',function(){
         model
@@ -300,6 +291,7 @@ exports.listByTag = function(req, res){
       model.populate(workflow.posts, {path: 'userId'}, function(err, posts) {
           if (err) {
               callback(err, null);
+              throw lk
           }
           workflow.outcome.posts = posts;
           
@@ -334,5 +326,5 @@ exports.listByTag = function(req, res){
         res.send(workflow.outcome);
     });
     
-    return workflow.emit('validation');
+    return workflow.emit('find');
 };
