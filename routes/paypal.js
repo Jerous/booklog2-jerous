@@ -46,8 +46,8 @@ router.put('/1/post/:postId/pay', function(req, res, next) {   //更模組化的
             redirect_urls: {
             
                 //http://localhost:3000/1/post/548bd9bacb50ac8018d15bf4/paid?paymentId=PAY-3YH39679C3452362HKSF5VRA&token=EC-4YM71232SL814491D&PayerID=D89BU7L8CYYP6
-                return_url: 'http://jerous.funtube.tw:3000/1/post/' + postId + '/paid',
-                cancel_url: 'http://jerous.funtube.tw:3000/1/post/' + postId + '/cancel'
+                return_url: 'http://jerous.funtube.tw/1/post/' + postId + '/paid',
+                cancel_url: 'http://jerous.funtube.tw/1/post/' + postId + '/cancel'
             }
         };
         //參考doc 設定必填內容
